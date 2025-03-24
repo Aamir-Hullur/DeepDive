@@ -6,9 +6,11 @@ import { useChat } from '@ai-sdk/react';
 
 const QnA = () => {
 	const { questions, isCompleted, topic, answers, setIsLoading } = useDeepResearchStore();
-    const { append } = useChat({
+    const { append,data } = useChat({
         api:"/api/deep-research"
     });
+
+    console.log(data);
 
     useEffect(()=>{
         if(isCompleted  && questions.length > 0){
