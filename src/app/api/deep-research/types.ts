@@ -23,7 +23,7 @@ export interface ModelCallOptions<T>{
     schema: z.ZodType<T>;
 }
 
-export interface searchResult{
+export interface SearchResult{
     title: string,
     url: string,
     content: string
