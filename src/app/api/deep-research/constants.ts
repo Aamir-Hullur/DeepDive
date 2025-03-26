@@ -5,10 +5,17 @@ export const MAX_RETRY_ATTEMPTS = 3; // It is the number of times the model will
 export const RETRY_DELAY_MS = 1000; // It is the delay in milliseconds between retries for the model to call LLMs
 
 // Model names
-export const MODELS = {
-  PLANNING: "google/gemini-2.5-pro-exp-03-25:free",
-  EXTRACTION: "google/gemini-2.0-flash-exp:free",
-  ANALYSIS: "google/gemini-2.5-pro-exp-03-25:free",
-  REPORT: "google/gemini-2.0-flash-thinking-exp:free"
+// export const MODELS = {
+//   PLANNING: "google/gemini-2.0-flash-lite-preview-02-05:free",
+//   EXTRACTION: "google/gemini-2.0-flash-lite-preview-02-05:free",
+//   ANALYSIS: "google/gemini-2.0-flash-lite-preview-02-05:free",
+//   REPORT: "google/gemini-2.0-flash-lite-preview-02-05:free"
+// }; 
 
-}; 
+export const MODELS = {
+    PLANNING: "gemini-2.0-flash-exp",
+    EXTRACTION: "gemini-2.0-flash-exp",
+    ANALYSIS: "gemini-2.0-flash-exp",
+    REPORT: "gemini-2.5-pro-exp-03-25"
+  }; 
+//   gemini-2.0-flash-thinking-exp-01-21

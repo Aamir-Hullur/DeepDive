@@ -1,12 +1,23 @@
 import { NextResponse } from "next/server";
 import { generateObject } from 'ai';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
+import { createOpenAI } from '@ai-sdk/openai';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { z } from "zod";
 
 const openrouter = createOpenRouter({
     apiKey: process.env.OPENROUTER_API_KEY || "",
   });
 
+const google = createGoogleGenerativeAI({
+    apiKey: process.env.GOOGLE_API_KEY || "",
+});
+
+const openai = createOpenAI({
+    baseURL: "https://models.inference.ai.azure.com",
+    apiKey: process.env.GITHUB_API_KEY || "",
+    compatibility: 'compatible'
+});
 const clarifyResearchGoals = async(topic: string) => {
     
     const prompt = `
@@ -16,7 +27,8 @@ const clarifyResearchGoals = async(topic: string) => {
     `
     try{
         const { object } = await generateObject({
-            model: openrouter("google/gemini-2.0-flash-lite-preview-02-05:free"),
+            // model: openrouter("google/gemini-2.0-flash-lite-preview-02-05:free"),
+            model: google("gemini-2.0-flash-exp"),
             prompt,
             schema: z.object({
                 questions: z.array(z.string())
