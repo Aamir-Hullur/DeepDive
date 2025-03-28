@@ -21,6 +21,7 @@ export interface ModelCallOptions<T>{
     prompt: string,
     system: string,
     schema?: z.ZodType<T>;
+    activityType?: Activity["type"];
 }
 
 export interface SearchResult{
@@ -33,7 +34,7 @@ export interface Activity {
     type: 'search' |'extract' |'analyze' |'generate' | 'planning' ;
     status: 'pending' |'complete' |'warning' | 'error' ;
     message: string,
-    timestamp?: string | number | Date;
+    timestamp?: number;
 }
 
 export interface ActivityTracker {

@@ -14,7 +14,6 @@ export async function deepResearch(researchState: ResearchState, dataStream: any
     let currentQueries = (initialQueries as any).searchQueries
 
 
-    
     while (currentQueries && currentQueries.length > 0 && Iteration < MAX_ITERATIONS){
         Iteration++
 

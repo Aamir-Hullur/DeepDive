@@ -63,7 +63,7 @@ const UserInput = () => {
 								<Input
 									placeholder="Enter your research topic"
 									{...field}
-									className="rounded-full w-full p-4 py-6 placeholder:text-sm bg-white/60 border-solid shadow-none"
+									className="rounded-full w-full p-4 py-6 placeholder:text-sm bg-white/60  border-black/10 border-solid shadow-none"
 								/>
 							</FormControl>
 							<FormMessage />

@@ -17,7 +17,7 @@ import {
 } from "./prompts";
 import { callModel } from "./model-caller";
 import { exa } from "./services";
-import { combineFindings } from "./utils";
+import { combineFindings, handleError } from "./utils";
 import {
 	MAX_CONTENT_CHARS,
 	MAX_ITERATIONS,
@@ -29,32 +29,40 @@ export async function generateSearchQueries(
 	researchState: ResearchState,
 	activityTracker: ActivityTracker
 ) {
-	activityTracker.add("planning","pending","Planning the research");
+	try{
+		activityTracker.add("planning","pending","Planning the research");
 
-	console.log("Model: ", MODELS.PLANNING);
-	const results = await callModel(
-		{
-			model: MODELS.PLANNING,
-			prompt: getPlanningPrompt(
-				researchState.topic,
-				researchState.clarificationsText
-			),
-			system: PLANNING_SYSTEM_PROMPT,
-			schema: z.object({
-				searchQueries: z
-					.array(z.string())
-					.describe(
-						"The search queries that can be used to find the most relevant content which can be used to write the comprehensive report on the given topic. (max 3 queries)"
-					),
-			}),
-		},
-		researchState
-	);
-
-
-	activityTracker.add("planning", "complete","Crafted the research plan");
-
-	return results;
+		console.log("Model: ", MODELS.PLANNING);
+		const results = await callModel(
+			{
+				model: MODELS.PLANNING,
+				prompt: getPlanningPrompt(
+					researchState.topic,
+					researchState.clarificationsText
+				),
+				system: PLANNING_SYSTEM_PROMPT,
+				schema: z.object({
+					searchQueries: z
+						.array(z.string())
+						.describe(
+							"The search queries that can be used to find the most relevant content which can be used to write the comprehensive report on the given topic. (max 3 queries)"
+						),
+				}),
+				activityType: "planning"
+			},
+			researchState, activityTracker
+		);
+	
+	
+		activityTracker.add("planning", "complete","Crafted the research plan");
+	
+		return results;
+	}catch(err){
+		console.log(err);
+		return handleError(err, `Research planning`, activityTracker,"planning", {
+			searchQueries: [`${researchState.topic} best practicrs`, `${researchState.topic} guidelines`, `${researchState.topic} examples` ]
+		})
+	}
 }
 
 export async function search(
@@ -99,6 +107,7 @@ export async function search(
 		return filteredResults;
 	} catch (err) {
 		console.log("error: ", err);
+		return handleError(err, `Searching for ${query}`, activityTracker,"search", []) || []
 	}
 }
 
@@ -109,32 +118,39 @@ export async function extractContent(
 	activityTracker: ActivityTracker
 ) {
 
-	activityTracker.add("extract","pending",`Extracting content from ${url}`);
+	try{
+		activityTracker.add("extract","pending",`Extracting content from ${url}`);
 
-	const results = await callModel(
-		{
-			model: MODELS.EXTRACTION,
-			prompt: getExtractionPrompt(
-				content,
-				researchState.topic,
-				researchState.clarificationsText
-			),
-			system: EXTRACTION_SYSTEM_PROMPT,
-			schema: z.object({
-				summary: z
-					.string()
-					.describe("A comprehensive summary of the content"),
-			}),
-		},
-		researchState
-	);
+		const results = await callModel(
+			{
+				model: MODELS.EXTRACTION,
+				prompt: getExtractionPrompt(
+					content,
+					researchState.topic,
+					researchState.clarificationsText
+				),
+				system: EXTRACTION_SYSTEM_PROMPT,
+				schema: z.object({
+					summary: z
+						.string()
+						.describe("A comprehensive summary of the content"),
+				}),
+				activityType: "extract"
+			},
+			researchState,activityTracker
+		);
+	
+		activityTracker.add("extract","complete",`Extracted content from ${url}`);
+	
+		return {
+			url,
+			summary: (results as any).summary,
+		};
+	}catch(err){
+		console.log("error: ", err);
+		return handleError(err, `Content extraction from ${url}`, activityTracker,"extract", null) || null
 
-	activityTracker.add("extract","complete",`Extracted content from ${url}`);
-
-	return {
-		url,
-		summary: (results as any).summary,
-	};
+	}
 }
 
 export async function processSearchResults(
@@ -207,8 +223,9 @@ export async function analyzeFindings(
 							"Search queries for missing information. Max 3 queries."
 						),
 				}),
+				activityType: "analyze"
 			},
-			researchState
+			researchState,activityTracker
 		);
 
 		const isContentSufficient = typeof result !== 'string' && result.sufficient
@@ -217,6 +234,11 @@ export async function analyzeFindings(
 		return result;
 	} catch (err) {
 		console.log(err);
+		return handleError(err, `Content analysis`, activityTracker,"analyze", {
+			sufficient: false, 
+			gaps: ["Unable to analyze content"],
+			queries: ["Please try a different search query"]
+		})
 	}
 }
 
@@ -236,12 +258,14 @@ export async function generateReport(researchState: ResearchState,activityTracke
 					researchState.clarificationsText
 				),
 				system: REPORT_SYSTEM_PROMPT,
+				activityType: "generate"
 			},
-			researchState
+			researchState,activityTracker
 		);
 		activityTracker.add("generate","complete",`Generated comprehensive report, Total tokens used: ${researchState.tokenUsed}. Research completed in ${researchState.completedSteps} steps.`);
 		return report;
 	} catch (err) {
 		console.log(err);
+		return handleError(err, `Report Generation`, activityTracker,"generate", "Error generating report, Please try again.")
 	}
 }

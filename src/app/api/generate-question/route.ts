@@ -18,6 +18,7 @@ const openai = createOpenAI({
     apiKey: process.env.GITHUB_API_KEY || "",
     compatibility: 'compatible'
 });
+
 const clarifyResearchGoals = async(topic: string) => {
     
     const prompt = `
@@ -28,13 +29,13 @@ const clarifyResearchGoals = async(topic: string) => {
     try{
         const { object } = await generateObject({
             // model: openrouter("google/gemini-2.0-flash-lite-preview-02-05:free"),
-            model: google("gemini-2.0-flash-exp"),
+            // model: google("gemini-2.0-flash-exp"),
+            model: openai("gpt-4o"),
             prompt,
             schema: z.object({
                 questions: z.array(z.string())
             })
           }); 
-
         return object.questions;
     }catch(e){
         console.log("Generate Error : ",e)

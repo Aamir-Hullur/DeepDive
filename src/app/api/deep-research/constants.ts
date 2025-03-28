@@ -1,5 +1,5 @@
 export const MAX_ITERATIONS = 3; // Maximum number of iterations
-export const MAX_SEARCH_RESULTS = 1; // Maximum number of search results
+export const MAX_SEARCH_RESULTS = 5; // Maximum number of search results
 export const MAX_CONTENT_CHARS = 20000; // Maximum number of characters in the content
 export const MAX_RETRY_ATTEMPTS = 3; // It is the number of times the model will try to call LLMs if it fails
 export const RETRY_DELAY_MS = 1000; // It is the delay in milliseconds between retries for the model to call LLMs
@@ -18,4 +18,12 @@ export const MODELS = {
     ANALYSIS: "gemini-2.0-flash-exp",
     REPORT: "gemini-2.5-pro-exp-03-25"
   }; 
+
+// export const MODELS = {
+//     PLANNING: "gpt-4o",
+//     EXTRACTION: "gpt-4o",
+//     ANALYSIS: "gpt-4o",
+//     REPORT: "gemini-2.5-pro-exp-03-25"
+//   }; 
+
 //   gemini-2.0-flash-thinking-exp-01-21

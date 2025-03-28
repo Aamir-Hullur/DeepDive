@@ -27,7 +27,7 @@ const formSchema = z.object({
 });
 
 const QuestionForm = () => {
-	const { questions, currentQuestion, answers, setCurrentQuestion, setAnswers, setIsCompleted, isLoading } = useDeepResearchStore();
+	const { questions, currentQuestion, answers, setCurrentQuestion, setAnswers, setIsCompleted, isLoading, isCompleted } = useDeepResearchStore();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -54,10 +54,12 @@ const QuestionForm = () => {
         }
 	}
 
+	if(isCompleted) return;
+
     if (questions.length === 0) return 
 
 	return (
-		<Card className="w-full max-w-[90vw] sm:max-w-[80vw] xl:max-w-[50vw] shadow-none">
+		<Card className="w-full max-w-[90vw] sm:max-w-[80vw] xl:max-w-[50vw] shadow-none bg-white/60 backdrop-blur-sm border rounded-xl border-black/10 border-solid">
 			<CardHeader className="px-4 sm:px-6">
 				<CardTitle className="text-base text-primary/50">
 					Questions {currentQuestion+1} of {questions.length}
@@ -80,6 +82,12 @@ const QuestionForm = () => {
 											placeholder="Type your answer here..."
 											{...field}
 											className="px-4 py-2 text-base resize-none placeholder:text-sm border-black/20"
+											onKeyDown={(e) => {
+												if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+													e.preventDefault();
+													form.handleSubmit(onSubmit)();
+												}
+											}}
 										/>
 									</FormControl>
 									<FormMessage />
