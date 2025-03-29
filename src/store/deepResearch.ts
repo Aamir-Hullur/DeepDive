@@ -1,6 +1,8 @@
 import { Activity, Sources } from "@/app/api/deep-research/types";
 import { create } from "zustand";
 
+export type ModelProvider = "gemini" | "openai" | "openrouter"
+
 interface DeepResearchState {   
     topic: string,
     questions: string[],
@@ -11,6 +13,7 @@ interface DeepResearchState {
     activities: Activity[],
     sources: Sources[],
     report: string,
+    modelProvider: ModelProvider;
 }
 
 interface DeepResearchActions {   
@@ -23,7 +26,7 @@ interface DeepResearchActions {
     setActivities: (activities: Activity[]) => void,
     setSources: (sources: Sources[]) => void,
     setReport: (report: string) => void,
-    
+    setModelProvider: (provider: ModelProvider) => void,
 }
 
 const initialState: DeepResearchState = {
@@ -36,6 +39,7 @@ const initialState: DeepResearchState = {
     activities: [],
     sources: [],
     report: "",
+    modelProvider: "gemini",
 }
 
 export const useDeepResearchStore = create<DeepResearchState & DeepResearchActions>((set) => ({
@@ -49,4 +53,5 @@ export const useDeepResearchStore = create<DeepResearchState & DeepResearchActio
     setActivities: (activities: Activity[]) => set({ activities }),
     setSources: (sources: Sources[]) => set({ sources }),
     setReport: (report: string) => set({ report }),
+    setModelProvider: (modelProvider: ModelProvider) => set({ modelProvider }),
 }));

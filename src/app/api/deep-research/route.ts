@@ -1,6 +1,7 @@
 import { createDataStreamResponse } from "ai";
 import { ResearchState } from "./types";
 import { deepResearch } from "./main";
+import {ModelProvider} from "@/store/deepResearch";
 
 export async function POST(req: Request) {
 	try {
@@ -10,7 +11,8 @@ export async function POST(req: Request) {
         
         const parsed = JSON.parse(lastMessageContent);
         const topic = parsed.topic
-        const clarification = parsed.clarification
+        const clarifications = parsed.clarifications
+		const modelProvider = (parsed.modelProvider || "gemini") as ModelProvider;
 
 
 		return createDataStreamResponse({
@@ -24,7 +26,8 @@ export async function POST(req: Request) {
 				tokenUsed: 0,
 				findings: [],
 				processedUrl: new Set(),
-				clarificationsText: JSON.stringify(clarification)
+				clarificationsText: JSON.stringify(clarifications),
+				modelProvider: modelProvider,
 			}
 
 			await deepResearch(researchState, dataStream)

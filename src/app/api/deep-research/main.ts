@@ -48,12 +48,24 @@ export async function deepResearch(researchState: ResearchState, dataStream: any
 
         currentQueries = ((analysis as any).queries || []).filter((query:string) => !currentQueries.includes(query));
     }
-
     console.log("We are outside of the loop with total iterations: ", Iteration)
-
     console.log("Findings: ",researchState.findings)
+    
+    let report = null;
+    try{
+        report = await generateReport(researchState,activityTracker);
+    } catch(err){
+        console.log("Error generating report: ", err);
+    }
 
-    const report = await generateReport(researchState,activityTracker);
+    if (!report) {
+        console.log("No report generated");
+        report = "The research process could not generate a comprehensive report. Please try again with a different topic or clarifications.";
+    }
+    
+
+
+    // const report = await generateReport(researchState,activityTracker);
 
     dataStream.writeData({
         type: "report",

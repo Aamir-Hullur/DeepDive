@@ -14,7 +14,7 @@ export const google = createGoogleGenerativeAI({
 });
 
 export const openai = createOpenAI({
-    baseURL: "https://models.inference.ai.azure.com",
+    baseURL: process.env.AZURE_OPENAI_ENDPOINT || "",
     apiKey: process.env.GITHUB_API_KEY || "",
     compatibility: 'compatible'
 });

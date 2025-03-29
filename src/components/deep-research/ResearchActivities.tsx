@@ -19,7 +19,7 @@ const ResearchActivities = () => {
 	if (activities.length === 0) return;
 
 	return (
-		<div className="w-[400px] fixed top-4 right-4">
+		<div className="w-[300px] fixed top-4 right-4">
 			<Collapsible
 				className="w-full"
 				open={isOpen}

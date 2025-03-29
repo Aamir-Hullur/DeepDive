@@ -21,7 +21,7 @@ const formSchema = z.object({
 
 const UserInput = () => {
 
-    const { setQuestions, setTopic, isLoading, setIsLoading } = useDeepResearchStore()
+    const { setQuestions, setTopic, isLoading, setIsLoading, modelProvider } = useDeepResearchStore()
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -34,9 +34,10 @@ const UserInput = () => {
         setIsLoading(true)
 		try {
             setTopic(values.input)
+
 			const response = await fetch("/api/generate-question", {
 				method: "POST",
-				body: JSON.stringify({ topic: values.input }),
+				body: JSON.stringify({ topic: values.input, modelProvider: modelProvider }),
 			});
 			const data = await response.json();
             setQuestions(data)

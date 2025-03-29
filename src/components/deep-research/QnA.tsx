@@ -9,7 +9,7 @@ import ResearchTimer from "./ResearchTimer";
 import CompletedQuestions from "./CompletedQuestions";
 
 const QnA = () => {
-	const { questions, isCompleted, topic, answers, setIsLoading, setActivities, setSources, setReport, isLoading } = useDeepResearchStore();
+	const { questions, isCompleted, topic, answers, setIsLoading, setActivities, setSources, setReport, isLoading, modelProvider } = useDeepResearchStore();
     const { append,data } = useChat({
         api:"/api/deep-research"
     });
@@ -54,11 +54,12 @@ const QnA = () => {
                 role: "user",
                 content: JSON.stringify({
                     topic: topic,
-                    clarifications: clarifications
+                    clarifications: clarifications,
+                    modelProvider: modelProvider,
                 })
             })
         }
-    },[isCompleted, questions, answers, topic, append])
+    },[isCompleted, questions, answers, topic, append, modelProvider])
 
 	// if (questions.length === 0) return null;
 

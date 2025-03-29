@@ -1,10 +1,14 @@
+'use client';
 import QnA from "@/components/deep-research/QnA";
 import UserInput from "@/components/deep-research/UserInput";
 import Image from "next/image";
-// import bg from "../../public/background.png"
 import bg from "../../public/bg1.png"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Import Select components
+import { useDeepResearchStore, ModelProvider } from "@/store/deepResearch"; // Import store and type
+import { Label } from "@/components/ui/label"; // Import Label
 
 export default function Home() {
+	const { modelProvider, setModelProvider, isLoading, isCompleted } = useDeepResearchStore();
 	return (
 		<main className="min-h-screen w-full flex flex-col items-center justify-start gap-8 py-16">
 
@@ -21,7 +25,23 @@ export default function Home() {
 					comprehensive report.
 				</p>
 			</div>
-
+            <div className="flex items-center gap-2">
+                <Label htmlFor="model-select" className="text-gray-600">Select Model Provider:</Label>
+                <Select
+                    value={modelProvider}
+                    onValueChange={(value) => setModelProvider(value as ModelProvider)}
+                    disabled={isLoading || isCompleted} 
+                >
+                    <SelectTrigger id="model-select" className="w-[180px] bg-white/60 border-black/10">
+                        <SelectValue placeholder="Select Provider" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="gemini">Gemini</SelectItem>
+                        <SelectItem value="openai">OpenAI</SelectItem>
+                        <SelectItem value="openrouter">OpenRouter</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
 			<UserInput />
 
 			<QnA />

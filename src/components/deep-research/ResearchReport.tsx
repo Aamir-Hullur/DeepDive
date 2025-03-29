@@ -49,7 +49,8 @@ const handleMarkdownDownload = () => {
   return (
     <Card className='max-w-[90vw] xl:max-w-[60vw] relative px-4 py-6 rounded-xl border-black/10 border-solid shadow-none p-6 bg-white/60 backdrop-blur-sm border'>
 
-        <div className='flex justify-end gap-2 mb-4 absolute top-4 right-4'>
+        {/* <div className='flex justify-end gap-2 mb-4 absolute top-4 right-4'> */}
+        <div className='flex justify-center gap-2 mb-0'>
             <Button size="sm" 
             className='flex items-center gap-2 rounded'
             onClick={handleMarkdownDownload}

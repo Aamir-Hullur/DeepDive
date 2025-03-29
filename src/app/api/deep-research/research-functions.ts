@@ -34,8 +34,9 @@ export async function generateSearchQueries(
 
 		console.log("Model: ", MODELS.PLANNING);
 		const results = await callModel(
-			{
-				model: MODELS.PLANNING,
+			{	
+				// model: MODELS.PLANNING,
+				provider: researchState.modelProvider,
 				prompt: getPlanningPrompt(
 					researchState.topic,
 					researchState.clarificationsText
@@ -93,7 +94,7 @@ export async function search(
 		});
 
 		const filteredResults = searchResult.results
-			.filter((r) => r.title && r.text !== undefined)
+			.filter((r) => r.title && r.text !== undefined && r.text.length > 10)
 			.map((r) => ({
 				title: r.title || "",
 				url: r.url || "",
@@ -123,7 +124,8 @@ export async function extractContent(
 
 		const results = await callModel(
 			{
-				model: MODELS.EXTRACTION,
+				// model: MODELS.EXTRACTION,
+				provider: researchState.modelProvider,
 				prompt: getExtractionPrompt(
 					content,
 					researchState.topic,
@@ -197,7 +199,8 @@ export async function analyzeFindings(
 
 		const result = await callModel(
 			{
-				model: MODELS.ANALYSIS,
+				// model: MODELS.ANALYSIS,
+				provider: researchState.modelProvider,
 				prompt: getAnalysisPrompt(
 					contentText,
 					researchState.topic,
@@ -251,7 +254,8 @@ export async function generateReport(researchState: ResearchState,activityTracke
 
 		const report = await callModel(
 			{
-				model: MODELS.REPORT,
+				// model: MODELS.REPORT,
+				provider: researchState.modelProvider,
 				prompt: getReportPrompt(
 					contentText,
 					researchState.topic,
@@ -263,6 +267,7 @@ export async function generateReport(researchState: ResearchState,activityTracke
 			researchState,activityTracker
 		);
 		activityTracker.add("generate","complete",`Generated comprehensive report, Total tokens used: ${researchState.tokenUsed}. Research completed in ${researchState.completedSteps} steps.`);
+		
 		return report;
 	} catch (err) {
 		console.log(err);

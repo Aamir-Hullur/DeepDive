@@ -1,5 +1,5 @@
 import { z } from "zod"
-
+import { ModelProvider } from "@/store/deepResearch";
 
 export interface ResearchFindings {
     summary: string,
@@ -12,12 +12,14 @@ export interface ResearchState {
     tokenUsed: number,
     findings: ResearchFindings[],
     processedUrl: Set<string>,
-    clarificationsText: string
+    clarificationsText: string,
+    modelProvider: ModelProvider;
 }
 
 
 export interface ModelCallOptions<T>{
-    model: string,
+    model?: string,
+    provider: ModelProvider,
     prompt: string,
     system: string,
     schema?: z.ZodType<T>;
@@ -31,7 +33,7 @@ export interface SearchResult{
 }
 
 export interface Activity {
-    type: 'search' |'extract' |'analyze' |'generate' | 'planning' ;
+    type: 'search' |'extract' |'analyze' | 'generate' | 'planning' ;
     status: 'pending' |'complete' |'warning' | 'error' ;
     message: string,
     timestamp?: number;
