@@ -52,7 +52,7 @@ const handleMarkdownDownload = () => {
         {/* <div className='flex justify-end gap-2 mb-4 absolute top-4 right-4'> */}
         <div className='flex justify-center gap-2 mb-0'>
             <Button size="sm" 
-            className='flex items-center gap-2 rounded'
+            className='flex items-center gap-2 rounded hover:cursor-pointer'
             onClick={handleMarkdownDownload}
             >
                 <Download className='w-4 h-4' /> Download

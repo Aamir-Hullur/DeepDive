@@ -3,9 +3,9 @@ import QnA from "@/components/deep-research/QnA";
 import UserInput from "@/components/deep-research/UserInput";
 import Image from "next/image";
 import bg from "../../public/bg1.png"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Import Select components
-import { useDeepResearchStore, ModelProvider } from "@/store/deepResearch"; // Import store and type
-import { Label } from "@/components/ui/label"; // Import Label
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; 
+import { useDeepResearchStore, ModelProvider } from "@/store/deepResearch"; 
+import { Label } from "@/components/ui/label"; 
 
 export default function Home() {
 	const { modelProvider, setModelProvider, isLoading, isCompleted } = useDeepResearchStore();
