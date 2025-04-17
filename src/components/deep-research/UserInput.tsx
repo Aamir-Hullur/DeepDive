@@ -24,7 +24,7 @@ const formSchema = z.object({
 });
 
 const UserInput = () => {
-	const { setQuestions, setTopic, isLoading, setIsLoading, modelProvider } =
+	const { setQuestions, setTopic, isLoading, setIsLoading, modelProvider, setIsCompleted, setAnswers, setCurrentQuestion } =
 		useDeepResearchStore();
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -37,7 +37,13 @@ const UserInput = () => {
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		setIsLoading(true);
 		try {
+			// Reset all relevant state when submitting a new topic
 			setTopic(values.input);
+			setQuestions([]);
+			setAnswers([]);
+			setCurrentQuestion(0);
+			setIsCompleted(false);
+			
 			const response = await fetch("/api/generate-question", {
 				method: "POST",
 				body: JSON.stringify({
@@ -82,11 +88,6 @@ const UserInput = () => {
                       "
 											/>
 											<div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
-												{/* <button 
-												type ="button"
-												className="text-gray-400 hover:text-gray-600">
-													<Paperclip className="w-5 h-5" />
-												</button> */}
 												<Button
 													type="submit"
 													size="icon"
@@ -102,27 +103,10 @@ const UserInput = () => {
 											</div>
 										</div>
 									</FormControl>
-									<FormMessage className="text-sm text-red-500 mt-2 pl-2" />
+									<FormMessage className="text-sm text-red-500 mt-2 pl-2 pb-4" />
 								</FormItem>
 							)}
-						/>
-{/* 
-						<div className="flex justify-end">
-							<Button
-								type="submit"
-								className="px-6 py-6 rounded-xl font-medium bg-primary hover:bg-primary/90 text-white transition-all shadow-sm"
-								disabled={isLoading}
-							>
-								{isLoading ? (
-									<>
-										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-										Generating questions...
-									</>
-								) : (
-									"Begin Research"
-								)}
-							</Button>
-						</div> */}
+							/>
 					</form>
 				</Form>
 			</div>

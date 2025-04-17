@@ -319,3 +319,44 @@ const providers: Provider[] = [
     ],
   },
 ]
+
+
+
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; 
+import React from 'react'
+import { useDeepResearchStore, ModelProvider } from "@/store/deepResearch"; 
+import { Label } from "@/components/ui/label"; 
+
+const ResearchConfiguration = () => {
+	const { modelProvider, setModelProvider, isLoading, isCompleted } = useDeepResearchStore();
+
+	return (
+		<div className="w-full max-w-xl mb-8">
+		<div className="bg-white/80 backdrop-blur-sm shadow-sm border border-slate-200/50 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+			<div>
+				<h2 className="font-medium text-slate-800 mb-1">Research Configuration</h2>
+				<p className="text-xs text-slate-500">Select your preferred AI model provider</p>
+			</div>
+			<div className="flex items-center gap-2">
+				<Label htmlFor="model-select" className="text-sm text-slate-600 whitespace-nowrap">Model:</Label>
+				<Select
+					value={modelProvider}
+					onValueChange={(value) => setModelProvider(value as ModelProvider)}
+					disabled={isLoading || isCompleted} 
+				>
+					<SelectTrigger id="model-select" className="w-36 bg-white border-slate-200">
+						<SelectValue placeholder="Select Provider" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value="gemini">Gemini</SelectItem>
+						<SelectItem value="openai">OpenAI</SelectItem>
+						<SelectItem value="openrouter">OpenRouter</SelectItem>
+					</SelectContent>
+				</Select>
+			</div>
+		</div>
+	</div>
+	)
+}
+
+export default ResearchConfiguration

@@ -41,6 +41,11 @@ const QnA = () => {
 
     useEffect(() => {
         if(isCompleted && questions.length > 0) {
+            // Reset previous research data when starting new research
+            setActivities([]);
+            setSources([]);
+            setReport("");
+            
             const clarifications = questions.map((question, index) => ({
                 question: question,
                 answer: answers[index],
@@ -55,7 +60,7 @@ const QnA = () => {
                 })
             })
         }
-    }, [isCompleted, questions, answers, topic, append, modelProvider])
+    }, [isCompleted, questions, answers, topic, append, modelProvider, setActivities, setSources, setReport])
 
 	return (
 		<div className="w-full flex flex-col items-center mb-16">

@@ -25,11 +25,23 @@ import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 const formSchema = z.object({
-	answer: z.string().min(1, "Please provide an answer to continue").max(500, "Answer should be less than 500 characters"),
+	answer: z
+		.string()
+		.min(1, "Please provide an answer to continue")
+		.max(500, "Answer should be less than 500 characters"),
 });
 
 const QuestionForm = () => {
-	const { questions, currentQuestion, answers, setCurrentQuestion, setAnswers, setIsCompleted, isLoading, isCompleted } = useDeepResearchStore();
+	const {
+		questions,
+		currentQuestion,
+		answers,
+		setCurrentQuestion,
+		setAnswers,
+		setIsCompleted,
+		isLoading,
+		isCompleted,
+	} = useDeepResearchStore();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -39,20 +51,20 @@ const QuestionForm = () => {
 	});
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-        const newAnswers = [...answers];
-        newAnswers[currentQuestion] = values.answer;
-        setAnswers(newAnswers);
+		const newAnswers = [...answers];
+		newAnswers[currentQuestion] = values.answer;
+		setAnswers(newAnswers);
 
-        if (currentQuestion < questions.length - 1) {
-            setCurrentQuestion(currentQuestion + 1);
-            form.reset({ answer: answers[currentQuestion + 1] || "" });
-        } else {
-            setIsCompleted(true);
-        }
+		if (currentQuestion < questions.length - 1) {
+			setCurrentQuestion(currentQuestion + 1);
+			form.reset({ answer: answers[currentQuestion + 1] || "" });
+		} else {
+			setIsCompleted(true);
+		}
 	}
 
 	if (isCompleted) return null;
-    if (questions.length === 0) return null;
+	if (questions.length === 0) return null;
 
 	return (
 		<Card className="w-full shadow-sm bg-white/80 backdrop-blur-sm border border-slate-200/50 rounded-xl overflow-hidden">
@@ -63,11 +75,12 @@ const QuestionForm = () => {
 							Question {currentQuestion + 1} of {questions.length}
 						</CardTitle>
 						<CardDescription className="text-slate-500 text-sm">
-							Help us refine your research by answering these questions
+							Help us refine your research by answering these
+							questions
 						</CardDescription>
 					</div>
-					<Progress 
-						value={((currentQuestion + 1) / questions.length) * 100} 
+					<Progress
+						value={((currentQuestion + 1) / questions.length) * 100}
 						className="h-2 w-full sm:max-w-[180px] bg-slate-200"
 					/>
 				</div>
@@ -78,10 +91,11 @@ const QuestionForm = () => {
 						{questions[currentQuestion]}
 					</h3>
 					<p className="text-sm text-slate-500">
-						Your answer will help tailor the research to your specific interests
+						Your answer will help tailor the research to your
+						specific interests
 					</p>
 				</div>
-				
+
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(onSubmit)}
@@ -92,34 +106,44 @@ const QuestionForm = () => {
 							name="answer"
 							render={({ field }) => (
 								<FormItem>
-									<FormControl> 
+									<FormControl>
 										<Textarea
 											placeholder="Type your answer here..."
 											{...field}
 											className="min-h-[120px] p-4 text-base resize-none border-slate-200 bg-white rounded-lg shadow-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400"
 											onKeyDown={(e) => {
-												if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+												if (
+													(e.metaKey || e.ctrlKey) &&
+													e.key === "Enter"
+												) {
 													e.preventDefault();
-													form.handleSubmit(onSubmit)();
+													form.handleSubmit(
+														onSubmit
+													)();
 												}
 											}}
 										/>
 									</FormControl>
 									<FormMessage className="text-sm text-red-500 mt-2" />
-									<p className="text-xs text-slate-500 mt-2">Press Ctrl+Enter or Cmd+Enter to submit</p>
+									<p className="text-xs text-slate-500 mt-2">
+										Press Ctrl+Enter or Cmd+Enter to submit
+									</p>
 								</FormItem>
 							)}
 						/>
-                        
-                        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2">
-							<Button 
-								type="button" 
+
+						<div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2">
+							<Button
+								type="button"
 								variant="outline"
 								className="w-full sm:w-auto order-2 sm:order-1 border-slate-200 text-slate-600 hover:bg-slate-50"
 								onClick={() => {
 									if (currentQuestion > 0) {
 										setCurrentQuestion(currentQuestion - 1);
-										form.setValue("answer", answers[currentQuestion - 1] || "");
+										form.setValue(
+											"answer",
+											answers[currentQuestion - 1] || ""
+										);
 									}
 								}}
 								disabled={currentQuestion === 0 || isLoading}
@@ -128,7 +152,7 @@ const QuestionForm = () => {
 								Previous Question
 							</Button>
 
-							<Button 
+							<Button
 								type="submit"
 								className="w-full sm:w-auto order-1 sm:order-2 bg-primary hover:bg-primary/90"
 								disabled={isLoading}
@@ -145,7 +169,7 @@ const QuestionForm = () => {
 									</>
 								)}
 							</Button>
-                        </div>
+						</div>
 					</form>
 				</Form>
 			</CardContent>
