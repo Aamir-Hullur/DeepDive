@@ -3,7 +3,7 @@ import { useDeepResearchStore, ModelProvider } from "@/store/deepResearch";
 import { Label } from "@/components/ui/label"; 
 import { ChevronDown, Eye, Globe, FileText, Clock, Cpu, Diamond, Network, ChevronLeft, LayoutGrid, List } from "lucide-react";
 import { cn } from "@/lib/utils";
-
+import { DeepSeek, Gemini, OpenAI, OpenRouter } from '@lobehub/icons';
 // Types
 type ModelCapability = "vision" | "web" | "files" | "reasoning";
 
@@ -11,8 +11,8 @@ type Model = {
   id: string;
   name: string;
   isNew?: boolean;
-  isDegraded?: boolean;
-  capabilities: ModelCapability[];
+  // isDegraded?: boolean;
+  capabilities?: ModelCapability[];
   provider: ModelProvider;
 };
 
@@ -42,7 +42,7 @@ const ResearchConfiguration = () => {
 
 	const toggleDropdown = () => {
 		setIsDropdownOpen(!isDropdownOpen);
-		// Reset to provider view when opening dropdown
+
 		if (!isDropdownOpen) {
 			setSelectedProvider(null);
 		}
@@ -55,7 +55,7 @@ const ResearchConfiguration = () => {
 	const selectModel = (model: Model) => {
 		setModelProvider(model.provider);
 		setIsDropdownOpen(false);
-		setSelectedProvider(null); // Reset to provider view for next open
+		setSelectedProvider(null); 
 	};
 
 	const backToProviders = () => {
@@ -204,12 +204,12 @@ const ResearchConfiguration = () => {
 													<span className="absolute top-1 right-1 text-[10px] text-blue-500 font-medium">NEW</span>
 												)}
 												<span className="text-slate-700 text-xs text-center">{model.name}</span>
-												<div className="flex items-center gap-1 mt-2">
+												{/* <div className="flex items-center gap-1 mt-2">
 													{model.capabilities.includes("vision") && <Eye className="w-4 h-4 text-slate-400" />}
 													{model.capabilities.includes("web") && <Globe className="w-4 h-4 text-slate-400" />}
 													{model.capabilities.includes("files") && <FileText className="w-4 h-4 text-slate-400" />}
 													{model.capabilities.includes("reasoning") && <Clock className="w-4 h-4 text-slate-400" />}
-												</div>
+												</div> */}
 											</div>
 										))}
 									</div>
@@ -228,19 +228,25 @@ const providers: Provider[] = [
 	{
 		id: "openai",
 		name: "OpenAI",
-		icon: <Cpu className="w-5 h-5" />,
+		icon: <OpenAI className="w-5 h-5" />,
 		models: [
 			{
-				id: "gpt-4o",
-				name: "GPT 4o",
-				capabilities: ["vision", "web", "files", "reasoning"],
+				id: "gpt-4.1",
+				name: "GPT 4.1",
+				// capabilities: ["vision", "web", "files", "reasoning"],
 				isNew: true,
 				provider: "openai",
 			},
 			{
-				id: "gpt-4-turbo",
-				name: "GPT-4 Turbo",
-				capabilities: ["vision", "files", "reasoning"],
+				id: "gpt-o3-mini",
+				name: "GPT o3 Mini",
+				// capabilities: ["web", "reasoning"],
+				provider: "openai",
+			},
+			{
+				id: "gpt-4o",
+				name: "GPT 4o",
+				// capabilities: ["reasoning"],
 				provider: "openai",
 			}
 		],
@@ -248,19 +254,19 @@ const providers: Provider[] = [
 	{
 		id: "gemini",
 		name: "Gemini",
-		icon: <Diamond className="w-5 h-5" />,
+		icon: <Gemini className="w-5 h-5" />,
 		models: [
 			{
-				id: "gemini-pro",
-				name: "Gemini Pro",
-				capabilities: ["reasoning"],
+				id: "gemini-2.5-pro",
+				name: "Gemini 2.5 Pro",
+				// capabilities: ["vision", "web", "reasoning"],
 				provider: "gemini",
 			},
 			{
-				id: "gemini-ultra",
-				name: "Gemini Ultra",
-				capabilities: ["vision", "web", "reasoning"],
+				id: "gemini-2.5-flash",
+				name: "Gemini 2.5 Flash",
 				isNew: true,
+				// capabilities: ["reasoning"],
 				provider: "gemini",
 			}
 		],
@@ -268,19 +274,37 @@ const providers: Provider[] = [
 	{
 		id: "openrouter",
 		name: "OpenRouter",
-		icon: <Network className="w-5 h-5" />,
+		icon: <OpenRouter className="w-5 h-5" />,
 		models: [
 			{
-				id: "openrouter-claude",
-				name: "Claude 3",
-				capabilities: ["vision", "files"],
+				id: "openrouter-gemini-2.0-flash",
+				name: "Gemini 2.0 Flash",
+				// capabilities: ["reasoning"],
 				provider: "openrouter",
 			},
 			{
-				id: "openrouter-mixtral",
-				name: "Mixtral 8x7B",
-				capabilities: ["reasoning"],
+				id: "qwen",
+				name: "Qwen-32B",
 				provider: "openrouter",
+			}
+		],
+	},
+	{
+		id: "deepseek",
+		name: "Deepseek",
+		icon: <DeepSeek className="w-5 h-5" />,
+		models: [
+			{
+				id: "deepseek-r1",
+				name: "Deepseek R1",
+				// capabilities: ["vision", "reasoning"],
+				provider: "deepseek",
+			},
+			{
+				id: "deepseek-v3",
+				name: "Deepseek V3",
+				// capabilities: ["vision", "web", "files"],
+				provider: "deepseek",
 			}
 		],
 	}

@@ -25,24 +25,25 @@ import { ModelProvider } from "@/store/deepResearch";
 // };
 
 const getModelInstance = (provider: ModelProvider, taskType: string): LanguageModel => {
-    // Map activityType to the correct MODELS key
-    const taskTypeMapping: Record<string, keyof typeof MODELS> = {
-        planning: "PLANNING",
-        extract: "EXTRACT",
-        analyze: "ANALYZE",
-        report: "REPORT",
-        generate: "REPORT", 
-    };
+	// Map activityType to the correct MODELS key
+	const taskTypeMapping: Record<string, keyof typeof MODELS> = {
+		planning: "PLANNING",
+		extract: "EXTRACT",
+		analyze: "ANALYZE",
+		report: "REPORT",
+		generate: "REPORT", 
+	};
 
-    const mappedTaskType = taskTypeMapping[taskType.toLowerCase()];
-    if (!mappedTaskType) {
-        throw new Error(`Invalid task type: ${taskType}`);
-    }
+	const mappedTaskType = taskTypeMapping[taskType.toLowerCase()];
+	if (!mappedTaskType) {
+		throw new Error(`Invalid task type: ${taskType}`);
+	}
 
-    const modelName = MODELS[mappedTaskType]?.[provider]; // Safely access the model name
-    if (!modelName) {
-        throw new Error(`Model not found for provider: ${provider}, taskType: ${mappedTaskType}`);
-    }
+	// Type assertion to ensure provider is a valid key for the model object
+	const modelName = MODELS[mappedTaskType]?.[provider as keyof (typeof MODELS)[typeof mappedTaskType]]; 
+	if (!modelName) {
+		throw new Error(`Model not found for provider: ${provider}, taskType: ${mappedTaskType}`);
+	}
 
     console.log(`Selecting model for Provider: ${provider}, Task: ${mappedTaskType}, ModelName: ${modelName}`);
     switch (provider) {

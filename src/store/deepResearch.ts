@@ -1,7 +1,7 @@
 import { Activity, Sources } from "@/app/api/deep-research/types";
 import { create } from "zustand";
 
-export type ModelProvider = "gemini" | "openai" | "openrouter"
+export type ModelProvider = "gemini" | "openai" | "openrouter" | "deepseek"
 
 interface DeepResearchState {   
     topic: string,

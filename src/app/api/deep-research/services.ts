@@ -10,7 +10,7 @@ export const openrouter = createOpenRouter({
   });
 
 export const google = createGoogleGenerativeAI({
-    apiKey: process.env.GOOGLE_API_KEY || "",
+    apiKey: process.env.GEMINI_API_KEY || "",
 });
 
 export const openai = createOpenAI({

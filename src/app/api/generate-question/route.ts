@@ -11,7 +11,7 @@ const openrouter = createOpenRouter({
   });
 
 const google = createGoogleGenerativeAI({
-    apiKey: process.env.GOOGLE_API_KEY || "",
+    apiKey: process.env.GEMINI_API_KEY || "",
 });
 
 const openai = createOpenAI({
