@@ -9,7 +9,7 @@ import ResearchTimer from "./ResearchTimer";
 import CompletedQuestions from "./CompletedQuestions";
 
 const QnA = () => {
-	const { questions, isCompleted, topic, answers, setIsLoading, setActivities, setSources, setReport, isLoading, modelProvider } = useDeepResearchStore();
+	const { questions, isCompleted, topic, answers, setIsLoading, setActivities, setSources, setReport, isLoading, modelProvider, modelId } = useDeepResearchStore();
     const { append, data } = useChat({
         api:"/api/deep-research"
     });
@@ -57,10 +57,11 @@ const QnA = () => {
                     topic: topic,
                     clarifications: clarifications,
                     modelProvider: modelProvider,
+                    modelId: modelId, 
                 })
             })
         }
-    }, [isCompleted, questions, answers, topic, append, modelProvider, setActivities, setSources, setReport])
+    }, [isCompleted, questions, answers, topic, append, modelProvider, modelId, setActivities, setSources, setReport])
 
 	return (
 		<div className="w-full flex flex-col items-center mb-16">

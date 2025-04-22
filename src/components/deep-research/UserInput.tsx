@@ -13,8 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useDeepResearchStore } from "@/store/deepResearch";
-import { ArrowUp, Loader2, Paperclip, SearchIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ArrowUp, Loader2 } from "lucide-react";
 
 const formSchema = z.object({
 	input: z
@@ -24,8 +23,18 @@ const formSchema = z.object({
 });
 
 const UserInput = () => {
-	const { setQuestions, setTopic, isLoading, setIsLoading, modelProvider, setIsCompleted, setAnswers, setCurrentQuestion } =
-		useDeepResearchStore();
+	const { 
+		setQuestions, 
+		setTopic, 
+		isLoading, 
+		isCompleted,
+		setIsLoading, 
+		modelProvider, 
+		modelId,
+		setIsCompleted, 
+		setAnswers, 
+		setCurrentQuestion 
+	} = useDeepResearchStore();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -37,7 +46,6 @@ const UserInput = () => {
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		setIsLoading(true);
 		try {
-			// Reset all relevant state when submitting a new topic
 			setTopic(values.input);
 			setQuestions([]);
 			setAnswers([]);
@@ -49,6 +57,7 @@ const UserInput = () => {
 				body: JSON.stringify({
 					topic: values.input,
 					modelProvider: modelProvider,
+					modelId: modelId, 
 				}),
 			});
 			const data = await response.json();
@@ -91,7 +100,7 @@ const UserInput = () => {
 												<Button
 													type="submit"
 													size="icon"
-													disabled={isLoading || !field.value}
+													disabled={isLoading || !field.value || isCompleted}
 													className="w-8 h-8 rounded-full flex items-center justify-center bg-primary hover:bg-primary/90 text-white shadow-xl disabled:opacity-50 cursor-pointer"
 												>{isLoading ? (
 														<Loader2 className="h-4 w-4 animate-spin" />

@@ -1,48 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useDeepResearchStore, ModelProvider } from "@/store/deepResearch"; 
+import { useDeepResearchStore } from "@/store/deepResearch"; 
 import { Label } from "@/components/ui/label"; 
-import { ChevronDown, Eye, Globe, FileText, Clock, Cpu, Diamond, Network, ChevronLeft, LayoutGrid, List } from "lucide-react";
+import { Brain, ChevronDown, ChevronLeft, Eye, FileText, Globe, LayoutGrid, List } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// Types
-type ModelCapability = "vision" | "web" | "files" | "reasoning";
-
-type Model = {
-  id: string;
-  name: string;
-  isNew?: boolean;
-  isDegraded?: boolean;
-  capabilities: ModelCapability[];
-  provider: ModelProvider;
-};
-
-type Provider = {
-  id: ModelProvider;
-  name: string;
-  icon: React.ReactNode;
-  models: Model[];
-};
+import { 
+    ModelProvider, 
+    Provider, 
+    getEnabledProviders,
+    getModelById,
+} from "@/config/models";
 
 type ViewMode = "list" | "grid";
 
 const ResearchConfiguration = () => {
-	const { modelProvider, setModelProvider, isLoading, isCompleted } = useDeepResearchStore();
+	const { modelProvider, modelId, setSelectedModel, isLoading, isCompleted } = useDeepResearchStore(); 
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
 	const [viewMode, setViewMode] = useState<ViewMode>("list");
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	
-	// Get the currently selected model based on modelProvider
+	const providers = getEnabledProviders();
+	
 	const getSelectedModel = () => {
-		const provider = providers.find(p => p.id === modelProvider);
-		return provider ? provider.models[0] : null;
+		if (!modelProvider || !modelId) return null;
+		return getModelById(modelProvider, modelId);
 	};
 	
 	const selectedModel = getSelectedModel();
 
 	const toggleDropdown = () => {
 		setIsDropdownOpen(!isDropdownOpen);
-		// Reset to provider view when opening dropdown
+
 		if (!isDropdownOpen) {
 			setSelectedProvider(null);
 		}
@@ -52,10 +40,10 @@ const ResearchConfiguration = () => {
 		setSelectedProvider(provider);
 	};
 
-	const selectModel = (model: Model) => {
-		setModelProvider(model.provider);
+	const selectModel = (provider: ModelProvider, modelId: string) => {
+		setSelectedModel(provider, modelId); 
 		setIsDropdownOpen(false);
-		setSelectedProvider(null); // Reset to provider view for next open
+		setSelectedProvider(null); 
 	};
 
 	const backToProviders = () => {
@@ -66,7 +54,6 @@ const ResearchConfiguration = () => {
 		setViewMode(viewMode === "list" ? "grid" : "list");
 	};
 
-	// Handle click outside to close dropdown
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -197,19 +184,20 @@ const ResearchConfiguration = () => {
 										{selectedProvider.models.map((model) => (
 											<div
 												key={model.id}
-												onClick={() => selectModel(model)}
+												onClick={() => selectModel(model.provider, model.id)}
 												className="flex flex-col items-center justify-center p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-300 cursor-pointer relative"
 											>
 												{model.isNew && (
 													<span className="absolute top-1 right-1 text-[10px] text-blue-500 font-medium">NEW</span>
 												)}
-												<span className="text-slate-700 text-xs text-center">{model.name}</span>
-												<div className="flex items-center gap-1 mt-2">
-													{model.capabilities.includes("vision") && <Eye className="w-4 h-4 text-slate-400" />}
-													{model.capabilities.includes("web") && <Globe className="w-4 h-4 text-slate-400" />}
-													{model.capabilities.includes("files") && <FileText className="w-4 h-4 text-slate-400" />}
-													{model.capabilities.includes("reasoning") && <Clock className="w-4 h-4 text-slate-400" />}
-												</div>
+												<span className="text-slate-700 text-xs font-semibold">{model.name}</span>
+												{model.capabilities && model.capabilities.length > 0
+												 && (<div className="flex items-center mt-2">
+														 {model.capabilities.includes("vision") && <Eye className="w-4 h-4 text-slate-400" />}
+														{model.capabilities.includes("web") && <Globe className="w-4 h-4 text-slate-400" />}
+														{model.capabilities.includes("files") && <FileText className="w-4 h-4 text-slate-400" />}
+														{model.capabilities.includes("reasoning") && <Brain className="w-4 h-4 text-slate-400" />}
+													 </div>)}
 											</div>
 										))}
 									</div>
@@ -222,68 +210,5 @@ const ResearchConfiguration = () => {
 		</div>
 	);
 };
-
-// Provider and model data
-const providers: Provider[] = [
-	{
-		id: "openai",
-		name: "OpenAI",
-		icon: <Cpu className="w-5 h-5" />,
-		models: [
-			{
-				id: "gpt-4o",
-				name: "GPT 4o",
-				capabilities: ["vision", "web", "files", "reasoning"],
-				isNew: true,
-				provider: "openai",
-			},
-			{
-				id: "gpt-4-turbo",
-				name: "GPT-4 Turbo",
-				capabilities: ["vision", "files", "reasoning"],
-				provider: "openai",
-			}
-		],
-	},
-	{
-		id: "gemini",
-		name: "Gemini",
-		icon: <Diamond className="w-5 h-5" />,
-		models: [
-			{
-				id: "gemini-pro",
-				name: "Gemini Pro",
-				capabilities: ["reasoning"],
-				provider: "gemini",
-			},
-			{
-				id: "gemini-ultra",
-				name: "Gemini Ultra",
-				capabilities: ["vision", "web", "reasoning"],
-				isNew: true,
-				provider: "gemini",
-			}
-		],
-	},
-	{
-		id: "openrouter",
-		name: "OpenRouter",
-		icon: <Network className="w-5 h-5" />,
-		models: [
-			{
-				id: "openrouter-claude",
-				name: "Claude 3",
-				capabilities: ["vision", "files"],
-				provider: "openrouter",
-			},
-			{
-				id: "openrouter-mixtral",
-				name: "Mixtral 8x7B",
-				capabilities: ["reasoning"],
-				provider: "openrouter",
-			}
-		],
-	}
-];
 
 export default ResearchConfiguration;

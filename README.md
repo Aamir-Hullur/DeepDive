@@ -121,7 +121,7 @@ yarn install
 ```
 EXA_SEARCH_API_KEY=your_exa_api_key
 OPENAI_API_KEY=your_openai_api_key
-GOOGLE_API_KEY=your_google_api_key
+GEMINI_API_KEY=your_GEMINI_API_KEY
 OPENROUTER_API_KEY=your_openrouter_api_key
 ```
 

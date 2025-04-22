@@ -37,6 +37,7 @@ export async function generateSearchQueries(
 			{	
 				// model: MODELS.PLANNING,
 				provider: researchState.modelProvider,
+				modelId: researchState.modelId, 
 				prompt: getPlanningPrompt(
 					researchState.topic,
 					researchState.clarificationsText
@@ -126,6 +127,7 @@ export async function extractContent(
 			{
 				// model: MODELS.EXTRACTION,
 				provider: researchState.modelProvider,
+				modelId: researchState.modelId,
 				prompt: getExtractionPrompt(
 					content,
 					researchState.topic,
@@ -201,6 +203,7 @@ export async function analyzeFindings(
 			{
 				// model: MODELS.ANALYSIS,
 				provider: researchState.modelProvider,
+				modelId: researchState.modelId, 
 				prompt: getAnalysisPrompt(
 					contentText,
 					researchState.topic,
@@ -256,6 +259,7 @@ export async function generateReport(researchState: ResearchState,activityTracke
 			{
 				// model: MODELS.REPORT,
 				provider: researchState.modelProvider,
+				modelId: researchState.modelId, 
 				prompt: getReportPrompt(
 					contentText,
 					researchState.topic,

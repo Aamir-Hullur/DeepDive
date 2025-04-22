@@ -6,7 +6,7 @@ import React, { ComponentPropsWithRef, useState } from 'react'
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { Prism as SyntaxHighlighter, SyntaxHighlighterProps } from 'react-syntax-highlighter';
-import { nightOwl } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 import { 
   BookOpen, 
   Download, 
@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import { nightOwl } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 type CodeProps = ComponentPropsWithRef<"code"> & {
   inline?: boolean
@@ -62,9 +63,9 @@ const ResearchReport = () => {
             </div>
           </div>
           <h3 className="text-xl font-medium text-slate-800 mb-2">Generating Research Report</h3>
-          <p className="text-base text-slate-500 max-w-md">
+          {/* <p className="text-base text-slate-500 max-w-md">
             Our AI is analyzing sources and compiling your comprehensive report on "{topic}"
-          </p>
+          </p> */}
         </div>
       </Card>
     );
