@@ -6,7 +6,7 @@ import React, { ComponentPropsWithRef, useState } from 'react'
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { Prism as SyntaxHighlighter, SyntaxHighlighterProps } from 'react-syntax-highlighter';
-import { nightOwl } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 import { 
   BookOpen, 
   Download, 
@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import { nightOwl } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 type CodeProps = ComponentPropsWithRef<"code"> & {
   inline?: boolean

@@ -10,9 +10,10 @@ export async function POST(req: Request) {
 
         
         const parsed = JSON.parse(lastMessageContent);
-        const topic = parsed.topic
-        const clarifications = parsed.clarifications
+        const topic = parsed.topic;
+        const clarifications = parsed.clarifications;
 		const modelProvider = (parsed.modelProvider || "gemini") as ModelProvider;
+		const modelId = parsed.modelId || ""; // Extract modelId from the request
 
 
 		return createDataStreamResponse({
@@ -28,6 +29,7 @@ export async function POST(req: Request) {
 				processedUrl: new Set(),
 				clarificationsText: JSON.stringify(clarifications),
 				modelProvider: modelProvider,
+				modelId: modelId, // Add modelId to research state
 			}
 
 			await deepResearch(researchState, dataStream)

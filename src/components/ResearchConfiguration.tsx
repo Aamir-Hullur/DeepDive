@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+// Import setSelectedModel action
 import { useDeepResearchStore, ModelProvider } from "@/store/deepResearch"; 
 import { Label } from "@/components/ui/label"; 
 import { ChevronDown, Eye, Globe, FileText, Clock, Cpu, Diamond, Network, ChevronLeft, LayoutGrid, List } from "lucide-react";
@@ -26,16 +27,18 @@ type Provider = {
 type ViewMode = "list" | "grid";
 
 const ResearchConfiguration = () => {
-	const { modelProvider, setModelProvider, isLoading, isCompleted } = useDeepResearchStore();
+	// Get modelId and setSelectedModel from the store
+	const { modelProvider, modelId, setSelectedModel, isLoading, isCompleted } = useDeepResearchStore(); 
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
 	const [viewMode, setViewMode] = useState<ViewMode>("list");
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	
-	// Get the currently selected model based on modelProvider
+	// Get the currently selected model based on modelProvider and modelId
 	const getSelectedModel = () => {
 		const provider = providers.find(p => p.id === modelProvider);
-		return provider ? provider.models[0] : null;
+		// Find the specific model using modelId
+		return provider ? provider.models.find(m => m.id === modelId) : null; 
 	};
 	
 	const selectedModel = getSelectedModel();
@@ -53,7 +56,8 @@ const ResearchConfiguration = () => {
 	};
 
 	const selectModel = (model: Model) => {
-		setModelProvider(model.provider);
+		// Use the new action to set both provider and model ID
+		setSelectedModel(model.provider, model.id); 
 		setIsDropdownOpen(false);
 		setSelectedProvider(null); 
 	};
@@ -104,6 +108,7 @@ const ResearchConfiguration = () => {
 								"text-slate-700 bg-white border-slate-200 hover:border-slate-300"
 							)}
 						>
+							{/* Display the name of the selected model */}
 							{selectedModel?.name || "Select Model"} <ChevronDown className="w-4 h-4 ml-1" />
 						</button>
 					</div>
@@ -223,7 +228,6 @@ const ResearchConfiguration = () => {
 	);
 };
 
-// Provider and model data
 const providers: Provider[] = [
 	{
 		id: "openai",
@@ -238,8 +242,8 @@ const providers: Provider[] = [
 				provider: "openai",
 			},
 			{
-				id: "gpt-o3-mini",
-				name: "GPT o3 Mini",
+				id: "gpt-o4-mini",
+				name: "GPT o4 Mini",
 				// capabilities: ["web", "reasoning"],
 				provider: "openai",
 			},
@@ -271,43 +275,43 @@ const providers: Provider[] = [
 			}
 		],
 	},
-	{
-		id: "openrouter",
-		name: "OpenRouter",
-		icon: <OpenRouter className="w-5 h-5" />,
-		models: [
-			{
-				id: "openrouter-gemini-2.0-flash",
-				name: "Gemini 2.0 Flash",
-				// capabilities: ["reasoning"],
-				provider: "openrouter",
-			},
-			{
-				id: "qwen",
-				name: "Qwen-32B",
-				provider: "openrouter",
-			}
-		],
-	},
-	{
-		id: "deepseek",
-		name: "Deepseek",
-		icon: <DeepSeek className="w-5 h-5" />,
-		models: [
-			{
-				id: "deepseek-r1",
-				name: "Deepseek R1",
-				// capabilities: ["vision", "reasoning"],
-				provider: "deepseek",
-			},
-			{
-				id: "deepseek-v3",
-				name: "Deepseek V3",
-				// capabilities: ["vision", "web", "files"],
-				provider: "deepseek",
-			}
-		],
-	}
+	// {
+	// 	id: "openrouter",
+	// 	name: "OpenRouter",
+	// 	icon: <OpenRouter className="w-5 h-5" />,
+	// 	models: [
+	// 		{
+	// 			id: "openrouter-gemini-2.0-pro",
+	// 			name: "Gemini 2.0 Pro",
+	// 			// capabilities: ["reasoning"],
+	// 			provider: "openrouter",
+	// 		},
+	// 		{
+	// 			id: "qwen",
+	// 			name: "Qwen-32B",
+	// 			provider: "openrouter",
+	// 		}
+	// 	],
+	// },
+	// {
+	// 	id: "deepseek",
+	// 	name: "Deepseek",
+	// 	icon: <DeepSeek className="w-5 h-5" />,
+	// 	models: [
+	// 		{
+	// 			id: "deepseek-r1",
+	// 			name: "Deepseek R1",
+	// 			// capabilities: ["vision", "reasoning"],
+	// 			provider: "deepseek",
+	// 		},
+	// 		{
+	// 			id: "deepseek-v3",
+	// 			name: "Deepseek V3",
+	// 			// capabilities: ["vision", "web", "files"],
+	// 			provider: "deepseek",
+	// 		}
+	// 	],
+	// }
 ];
 
 export default ResearchConfiguration;

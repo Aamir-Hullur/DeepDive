@@ -13,13 +13,14 @@ export interface ResearchState {
     findings: ResearchFindings[],
     processedUrl: Set<string>,
     clarificationsText: string,
-    modelProvider: ModelProvider;
+    modelProvider: ModelProvider,
+    modelId: string;
 }
-
 
 export interface ModelCallOptions<T>{
     model?: string,
     provider: ModelProvider,
+    modelId: string,
     prompt: string,
     system: string,
     schema?: z.ZodType<T>;

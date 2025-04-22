@@ -13,8 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useDeepResearchStore } from "@/store/deepResearch";
-import { ArrowUp, Loader2, Paperclip, SearchIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ArrowUp, Loader2 } from "lucide-react";
 
 const formSchema = z.object({
 	input: z
@@ -24,8 +23,17 @@ const formSchema = z.object({
 });
 
 const UserInput = () => {
-	const { setQuestions, setTopic, isLoading, setIsLoading, modelProvider, setIsCompleted, setAnswers, setCurrentQuestion } =
-		useDeepResearchStore();
+	const { 
+		setQuestions, 
+		setTopic, 
+		isLoading, 
+		setIsLoading, 
+		modelProvider, 
+		modelId,
+		setIsCompleted, 
+		setAnswers, 
+		setCurrentQuestion 
+	} = useDeepResearchStore();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -49,6 +57,7 @@ const UserInput = () => {
 				body: JSON.stringify({
 					topic: values.input,
 					modelProvider: modelProvider,
+					modelId: modelId, // Pass the modelId to the API
 				}),
 			});
 			const data = await response.json();
