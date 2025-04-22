@@ -1,14 +1,18 @@
 import { ActivityTracker, ModelCallOptions } from "./types";
 import { ResearchState } from "./types";
-import { google,openai } from "./services";
+import { google, openai } from "./services";
 import { generateObject, generateText, LanguageModel } from "ai";
-import { MAX_RETRY_ATTEMPTS, RETRY_DELAY_MS, MODELS, PROVIDER_MODEL_MAP } from "./constants";
+import { MAX_RETRY_ATTEMPTS, RETRY_DELAY_MS } from "./constants";
 import { delay } from "./utils";
-import { ModelProvider } from "@/store/deepResearch";
-
+import { 
+  ModelProvider, 
+  TaskType,
+  taskModelMap,
+  getModelById,
+} from "@/config/models";
 
 const getModelInstance = (provider: ModelProvider, modelId: string, taskType: string): LanguageModel => {
-	const taskTypeMapping: Record<string, keyof typeof MODELS> = {
+	const taskTypeMapping: Record<string, TaskType> = {
 			planning: "PLANNING",
 			extract: "EXTRACT",
 			analyze: "ANALYZE",
@@ -16,7 +20,7 @@ const getModelInstance = (provider: ModelProvider, modelId: string, taskType: st
 			generate: "REPORT", 
 	};
 
-	const mappedTaskType = taskTypeMapping[taskType.toLowerCase()];
+	const mappedTaskType = taskTypeMapping[taskType.toLowerCase()] as TaskType;
 	if (!mappedTaskType) {
 			throw new Error(`Invalid task type: ${taskType}`);
 	}
@@ -25,12 +29,19 @@ const getModelInstance = (provider: ModelProvider, modelId: string, taskType: st
 	
 	// Only use user-selected model for REPORT/generate phase
 	// For PLANNING, EXTRACT, ANALYZE, always use the default models
-	if ((mappedTaskType === "REPORT") && modelId && PROVIDER_MODEL_MAP[provider] && PROVIDER_MODEL_MAP[provider][modelId]) {
-			actualModelName = PROVIDER_MODEL_MAP[provider][modelId];
-			console.log(`Using user-selected model for REPORT: ${modelId} -> ${actualModelName}`);
+	if ((mappedTaskType === "REPORT") && modelId) {
+			const model = getModelById(provider, modelId);
+			if (model) {
+				actualModelName = model.apiIdentifier;
+				console.log(`Using user-selected model for REPORT: ${modelId} -> ${actualModelName}`);
+			} else {
+				// Fallback to default model for this provider and task type
+				actualModelName = taskModelMap[mappedTaskType]?.[provider] || "";
+				console.log(`Model not found, using default model for ${provider}/${mappedTaskType}: ${actualModelName}`);
+			}
 	} else {
 			// Use default models for this provider and task type
-			actualModelName = MODELS[mappedTaskType]?.[provider];
+			actualModelName = taskModelMap[mappedTaskType]?.[provider] || "";
 			console.log(`Using default model for ${provider}/${mappedTaskType}: ${actualModelName}`);
 	}
 
@@ -41,15 +52,19 @@ const getModelInstance = (provider: ModelProvider, modelId: string, taskType: st
 	console.log(`Selecting model for Provider: ${provider}, Task: ${mappedTaskType}, Final Model: ${actualModelName}`);
 	
 	switch (provider) {
-			case "openai":
-					return openai(actualModelName);
-			// case "openrouter":
-			// 		return openrouter(actualModelName);
-			// case "deepseek":
-			// 		return deepseek(actualModelName);
-			case "gemini":
-			default:
-					return google(actualModelName);
+		case "openai":
+			return openai(actualModelName);
+		case "openrouter":
+			// Commented code preserved as requested
+			// return openrouter(actualModelName);
+			throw new Error("OpenRouter provider is not currently enabled");
+		case "deepseek":
+			// Commented code preserved as requested
+			// return deepseek(actualModelName);
+			throw new Error("Deepseek provider is not currently enabled");
+		case "gemini":
+		default:
+			return google(actualModelName);
 	}
 };
 
@@ -62,16 +77,16 @@ export async function callModel<T>(
 	let attempts = 0;
 	let lastError : Error | null = null;
 	console.log("Activity Type: ", activityType);
-	const taskType = (activityType.toUpperCase() as keyof typeof MODELS);
+	const taskType = (activityType.toUpperCase() as TaskType);
 	console.log(`Task Type: ${taskType}, Provider: ${provider}`);
 	const modelInstance = getModelInstance(provider, modelId, taskType);
 
 	while (attempts < MAX_RETRY_ATTEMPTS) {
 		try {
 			if (schema) {
-				// console.log("Model: ", model);
 				console.log("Using Model Instance: ", modelInstance);
 				const { object, usage } = await generateObject({
+					// Commented code preserved as requested
 					// model: openrouter(model),
 					// model: model === "gpt-4o" ? openai(model) : google(model),
 					model: modelInstance,

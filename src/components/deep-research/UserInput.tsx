@@ -27,6 +27,7 @@ const UserInput = () => {
 		setQuestions, 
 		setTopic, 
 		isLoading, 
+		isCompleted,
 		setIsLoading, 
 		modelProvider, 
 		modelId,
@@ -45,7 +46,6 @@ const UserInput = () => {
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		setIsLoading(true);
 		try {
-			// Reset all relevant state when submitting a new topic
 			setTopic(values.input);
 			setQuestions([]);
 			setAnswers([]);
@@ -57,7 +57,7 @@ const UserInput = () => {
 				body: JSON.stringify({
 					topic: values.input,
 					modelProvider: modelProvider,
-					modelId: modelId, // Pass the modelId to the API
+					modelId: modelId, 
 				}),
 			});
 			const data = await response.json();
@@ -100,7 +100,7 @@ const UserInput = () => {
 												<Button
 													type="submit"
 													size="icon"
-													disabled={isLoading || !field.value}
+													disabled={isLoading || !field.value || isCompleted}
 													className="w-8 h-8 rounded-full flex items-center justify-center bg-primary hover:bg-primary/90 text-white shadow-xl disabled:opacity-50 cursor-pointer"
 												>{isLoading ? (
 														<Loader2 className="h-4 w-4 animate-spin" />

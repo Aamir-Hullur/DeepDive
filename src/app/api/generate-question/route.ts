@@ -4,7 +4,7 @@ import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { createOpenAI } from '@ai-sdk/openai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { z } from "zod";
-import { ModelProvider } from "@/store/deepResearch";
+import { ModelProvider } from "@/config/models";
 // import { deepseek } from "@ai-sdk/deepseek";
 
 // const openrouter = createOpenRouter({

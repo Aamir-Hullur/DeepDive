@@ -1,8 +1,6 @@
 import { Activity, Sources } from "@/app/api/deep-research/types";
 import { create } from "zustand";
-
-// export type ModelProvider = "gemini" | "openai" | "openrouter" | "deepseek";
-export type ModelProvider = "gemini" | "openai" 
+import { ModelProvider, getEnabledProviders } from "@/config/models";
 
 interface DeepResearchState {   
     topic: string,
@@ -32,9 +30,21 @@ interface DeepResearchActions {
     setSelectedModel: (provider: ModelProvider, modelId: string) => void; 
 }
 
+const getDefaultProvider = (): ModelProvider => {
+    const enabledProviders = getEnabledProviders();
+    return enabledProviders.length > 0 ? enabledProviders[0].id : "gemini";
+};
+
+const getDefaultModelId = (provider: ModelProvider): string => {
+    const providerData = getEnabledProviders().find(p => p.id === provider);
+    return providerData?.models[0]?.id || "gemini-2.5-pro";
+};
+
+const defaultProvider = getDefaultProvider();
+
 const initialState: DeepResearchState = {
     topic: "",
-	questions: [],
+    questions: [],
     answers: [],
     currentQuestion: 0,
     isCompleted: false,
@@ -42,14 +52,14 @@ const initialState: DeepResearchState = {
     activities: [],
     sources: [],
     report: "",
-    modelProvider: "gemini", // Default provider
-    modelId: "gemini-2.5-pro", // Default model ID for the default provider
+    modelProvider: defaultProvider,
+    modelId: getDefaultModelId(defaultProvider),
 }
 
 export const useDeepResearchStore = create<DeepResearchState & DeepResearchActions>((set) => ({
-	...initialState,
-	setTopic: (topic: string) => set({ topic }),
-	setQuestions: (questions: string[]) => set({ questions }),
+    ...initialState,
+    setTopic: (topic: string) => set({ topic }),
+    setQuestions: (questions: string[]) => set({ questions }),
     setAnswers: (answers: string[]) => set({ answers }),
     setCurrentQuestion: (currentQuestion: number) => set({ currentQuestion }),
     setIsCompleted: (isCompleted: boolean) => set({ isCompleted }),

@@ -63,9 +63,9 @@ const ResearchReport = () => {
             </div>
           </div>
           <h3 className="text-xl font-medium text-slate-800 mb-2">Generating Research Report</h3>
-          <p className="text-base text-slate-500 max-w-md">
+          {/* <p className="text-base text-slate-500 max-w-md">
             Our AI is analyzing sources and compiling your comprehensive report on "{topic}"
-          </p>
+          </p> */}
         </div>
       </Card>
     );

@@ -1,44 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
-// Import setSelectedModel action
-import { useDeepResearchStore, ModelProvider } from "@/store/deepResearch"; 
+import { useDeepResearchStore } from "@/store/deepResearch"; 
 import { Label } from "@/components/ui/label"; 
-import { ChevronDown, Eye, Globe, FileText, Clock, Cpu, Diamond, Network, ChevronLeft, LayoutGrid, List } from "lucide-react";
+import { Brain, ChevronDown, ChevronLeft, Eye, FileText, Globe, LayoutGrid, List } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { DeepSeek, Gemini, OpenAI, OpenRouter } from '@lobehub/icons';
-// Types
-type ModelCapability = "vision" | "web" | "files" | "reasoning";
-
-type Model = {
-  id: string;
-  name: string;
-  isNew?: boolean;
-  // isDegraded?: boolean;
-  capabilities?: ModelCapability[];
-  provider: ModelProvider;
-};
-
-type Provider = {
-  id: ModelProvider;
-  name: string;
-  icon: React.ReactNode;
-  models: Model[];
-};
+import { 
+    ModelProvider, 
+    Provider, 
+    getEnabledProviders,
+    getModelById,
+} from "@/config/models";
 
 type ViewMode = "list" | "grid";
 
 const ResearchConfiguration = () => {
-	// Get modelId and setSelectedModel from the store
 	const { modelProvider, modelId, setSelectedModel, isLoading, isCompleted } = useDeepResearchStore(); 
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
 	const [viewMode, setViewMode] = useState<ViewMode>("list");
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	
-	// Get the currently selected model based on modelProvider and modelId
+	const providers = getEnabledProviders();
+	
 	const getSelectedModel = () => {
-		const provider = providers.find(p => p.id === modelProvider);
-		// Find the specific model using modelId
-		return provider ? provider.models.find(m => m.id === modelId) : null; 
+		if (!modelProvider || !modelId) return null;
+		return getModelById(modelProvider, modelId);
 	};
 	
 	const selectedModel = getSelectedModel();
@@ -55,9 +40,8 @@ const ResearchConfiguration = () => {
 		setSelectedProvider(provider);
 	};
 
-	const selectModel = (model: Model) => {
-		// Use the new action to set both provider and model ID
-		setSelectedModel(model.provider, model.id); 
+	const selectModel = (provider: ModelProvider, modelId: string) => {
+		setSelectedModel(provider, modelId); 
 		setIsDropdownOpen(false);
 		setSelectedProvider(null); 
 	};
@@ -70,7 +54,6 @@ const ResearchConfiguration = () => {
 		setViewMode(viewMode === "list" ? "grid" : "list");
 	};
 
-	// Handle click outside to close dropdown
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -108,7 +91,6 @@ const ResearchConfiguration = () => {
 								"text-slate-700 bg-white border-slate-200 hover:border-slate-300"
 							)}
 						>
-							{/* Display the name of the selected model */}
 							{selectedModel?.name || "Select Model"} <ChevronDown className="w-4 h-4 ml-1" />
 						</button>
 					</div>
@@ -202,19 +184,20 @@ const ResearchConfiguration = () => {
 										{selectedProvider.models.map((model) => (
 											<div
 												key={model.id}
-												onClick={() => selectModel(model)}
+												onClick={() => selectModel(model.provider, model.id)}
 												className="flex flex-col items-center justify-center p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-300 cursor-pointer relative"
 											>
 												{model.isNew && (
 													<span className="absolute top-1 right-1 text-[10px] text-blue-500 font-medium">NEW</span>
 												)}
-												<span className="text-slate-700 text-xs text-center">{model.name}</span>
-												{/* <div className="flex items-center gap-1 mt-2">
-													{model.capabilities.includes("vision") && <Eye className="w-4 h-4 text-slate-400" />}
-													{model.capabilities.includes("web") && <Globe className="w-4 h-4 text-slate-400" />}
-													{model.capabilities.includes("files") && <FileText className="w-4 h-4 text-slate-400" />}
-													{model.capabilities.includes("reasoning") && <Clock className="w-4 h-4 text-slate-400" />}
-												</div> */}
+												<span className="text-slate-700 text-xs font-semibold">{model.name}</span>
+												{model.capabilities && model.capabilities.length > 0
+												 && (<div className="flex items-center mt-2">
+														 {model.capabilities.includes("vision") && <Eye className="w-4 h-4 text-slate-400" />}
+														{model.capabilities.includes("web") && <Globe className="w-4 h-4 text-slate-400" />}
+														{model.capabilities.includes("files") && <FileText className="w-4 h-4 text-slate-400" />}
+														{model.capabilities.includes("reasoning") && <Brain className="w-4 h-4 text-slate-400" />}
+													 </div>)}
 											</div>
 										))}
 									</div>
@@ -227,91 +210,5 @@ const ResearchConfiguration = () => {
 		</div>
 	);
 };
-
-const providers: Provider[] = [
-	{
-		id: "openai",
-		name: "OpenAI",
-		icon: <OpenAI className="w-5 h-5" />,
-		models: [
-			{
-				id: "gpt-4.1",
-				name: "GPT 4.1",
-				// capabilities: ["vision", "web", "files", "reasoning"],
-				isNew: true,
-				provider: "openai",
-			},
-			{
-				id: "gpt-o4-mini",
-				name: "GPT o4 Mini",
-				// capabilities: ["web", "reasoning"],
-				provider: "openai",
-			},
-			{
-				id: "gpt-4o",
-				name: "GPT 4o",
-				// capabilities: ["reasoning"],
-				provider: "openai",
-			}
-		],
-	},
-	{
-		id: "gemini",
-		name: "Gemini",
-		icon: <Gemini className="w-5 h-5" />,
-		models: [
-			{
-				id: "gemini-2.5-pro",
-				name: "Gemini 2.5 Pro",
-				// capabilities: ["vision", "web", "reasoning"],
-				provider: "gemini",
-			},
-			{
-				id: "gemini-2.5-flash",
-				name: "Gemini 2.5 Flash",
-				isNew: true,
-				// capabilities: ["reasoning"],
-				provider: "gemini",
-			}
-		],
-	},
-	// {
-	// 	id: "openrouter",
-	// 	name: "OpenRouter",
-	// 	icon: <OpenRouter className="w-5 h-5" />,
-	// 	models: [
-	// 		{
-	// 			id: "openrouter-gemini-2.0-pro",
-	// 			name: "Gemini 2.0 Pro",
-	// 			// capabilities: ["reasoning"],
-	// 			provider: "openrouter",
-	// 		},
-	// 		{
-	// 			id: "qwen",
-	// 			name: "Qwen-32B",
-	// 			provider: "openrouter",
-	// 		}
-	// 	],
-	// },
-	// {
-	// 	id: "deepseek",
-	// 	name: "Deepseek",
-	// 	icon: <DeepSeek className="w-5 h-5" />,
-	// 	models: [
-	// 		{
-	// 			id: "deepseek-r1",
-	// 			name: "Deepseek R1",
-	// 			// capabilities: ["vision", "reasoning"],
-	// 			provider: "deepseek",
-	// 		},
-	// 		{
-	// 			id: "deepseek-v3",
-	// 			name: "Deepseek V3",
-	// 			// capabilities: ["vision", "web", "files"],
-	// 			provider: "deepseek",
-	// 		}
-	// 	],
-	// }
-];
 
 export default ResearchConfiguration;
